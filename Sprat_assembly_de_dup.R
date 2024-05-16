@@ -236,9 +236,67 @@ sprat_lo_GR$Oce_v_Baltic <- abs(sprat_lo_GR$mean_oceanic - sprat_lo_GR$Baltic_me
 save(sprat_lo_GR, sprat_site_filter, file = "~/Projects/Sprat/data/genotypes/Sprat_pool_DeDup_v2_GR_Ch_lo_ext.RData") ##Current, HiC_DeDup_v2 version
 
 
+#Comparing with the DToL assembly
+
+HiC_DeDup_v2_v_fSprSpr1.1_satsuma <- satsuma_processing_v2("~/Projects/Sprat/data/HiC_satsuma/fSprSpr1.1_v_HiC_DeDup_v2_satsuma.out_sorted.gz")
+HiC_DeDup_v2_v_fSprSpr1.1_satsuma <- satsuma_direction_est(HiC_DeDup_v2_v_fSprSpr1.1_satsuma)
+
+fSprSpr1.1 <- readDNAStringSet("/Users/mapet205/Projects/Sprat/data/assemblies/DToL/ncbi_dataset/ncbi_dataset/data/GCA_963457725.1/GCA_963457725.1_fSprSpr1.1_genomic.fna")
 
 
 
+HiC_DeDup_main_scaffs <- names(table(HiC_DeDup_v2_v_fSprSpr1.1_satsuma$seqnames)[order(table(HiC_DeDup_v2_v_fSprSpr1.1_satsuma$seqnames),decreasing = T)][1:25])
+fSprSpr1.1_main_scaffs <- grep("chrom", as.character(unique(HiC_DeDup_v2_v_fSprSpr1.1_satsuma$T_seqnames)), value = T)
+fSprSpr1.1_main_scaffs <- fSprSpr1.1_main_scaffs[order(fSprSpr1.1_main_scaffs)]
+DeDup_v2_v_fSprSpr1.1_satsuma_clean <- HiC_DeDup_v2_v_fSprSpr1.1_satsuma[(HiC_DeDup_v2_v_fSprSpr1.1_satsuma$seqnames %in% HiC_DeDup_main_scaffs) & (HiC_DeDup_v2_v_fSprSpr1.1_satsuma$T_seqnames %in% fSprSpr1.1_main_scaffs),]
+DeDup_v2_v_fSprSpr1.1_satsuma_clean$seqnames <- as.character(DeDup_v2_v_fSprSpr1.1_satsuma_clean$seqnames)
+DeDup_v2_v_fSprSpr1.1_satsuma_clean$T_seqnames <- as.character(DeDup_v2_v_fSprSpr1.1_satsuma_clean$T_seqnames)
+
+DeDup_v2_v_fSprSpr1.1_mapping_summary <- table(DeDup_v2_v_fSprSpr1.1_satsuma_clean[,c("seqnames", "T_seqnames")])
+DeDup_v2_v_fSprSpr1.1_mapping_summary["PGA_scaffold_1118__66_contigs__length_56234773", ]
+DeDup_v2_v_fSprSpr1.1_mapping_summary["PGA_scaffold_1111__78_contigs__length_49772038", ]
+DeDup_v2_v_fSprSpr1.1_mapping_summary[,"OY735285.1_Sprattus_sprattus_genome_assembly,_chromosome:_1"]
+DeDup_v2_v_fSprSpr1.1_mapping_summary[,"OY735286.1_Sprattus_sprattus_genome_assembly,_chromosome:_2"]
+DeDup_v2_v_fSprSpr1.1_mapping_summary[,"OY735287.1_Sprattus_sprattus_genome_assembly,_chromosome:_3"]
+pdf(file = "~/Projects/Sprat/doc/assembly_curation/DeDup_v2_vs_fSprSpr1.1_hm.pdf", width = 12, height = 12)
+heatmap(DeDup_v2_v_fSprSpr1.1_mapping_summary, scale = "col", margins = c(14, 14), cexRow = 0.6, cexCol = 0.6)
+heatmap(DeDup_v2_v_fSprSpr1.1_mapping_summary, scale = "row", margins = c(14, 14), cexRow = 0.6, cexCol = 0.6)
+dev.off()
+
+#Looking at split Chr2
+fSprSpr1.1[4]# Length: 71 378 072
+#PGA_scaffold_1109__40_contigs__length_34818411 PGA_scaffold_1110__33_contigs__length_20919432 # length: 34818411 + 20919432 = 55737843
+DeDup_v2_v_fSprSpr1.1_Chr2 <- DeDup_v2_v_fSprSpr1.1_satsuma_clean[DeDup_v2_v_fSprSpr1.1_satsuma_clean$T_seqnames == "OY735286.1_Sprattus_sprattus_genome_assembly,_chromosome:_2",]
+DeDup_v2_v_fSprSpr1.1_Chr2 <- DeDup_v2_v_fSprSpr1.1_Chr2[DeDup_v2_v_fSprSpr1.1_Chr2$seqnames %in% c("PGA_scaffold_1109__40_contigs__length_34818411", "PGA_scaffold_1110__33_contigs__length_20919432"),]
+DeDup_v2_v_fSprSpr1.1_Chr2$plot_col <- NA
+DeDup_v2_v_fSprSpr1.1_Chr2$plot_col[DeDup_v2_v_fSprSpr1.1_Chr2$seqnames == "PGA_scaffold_1109__40_contigs__length_34818411"] <- "olivedrab"
+DeDup_v2_v_fSprSpr1.1_Chr2$plot_col[DeDup_v2_v_fSprSpr1.1_Chr2$seqnames == "PGA_scaffold_1110__33_contigs__length_20919432"] <- "darkorchid"
+
+
+DeDup_v2_v_fSprSpr1.1_Chr1 <- DeDup_v2_v_fSprSpr1.1_satsuma_clean[DeDup_v2_v_fSprSpr1.1_satsuma_clean$T_seqnames == "OY735285.1_Sprattus_sprattus_genome_assembly,_chromosome:_1",]
+DeDup_v2_v_fSprSpr1.1_Chr1$plot_col <- "black"
+DeDup_v2_v_fSprSpr1.1_Chr1$plot_col[DeDup_v2_v_fSprSpr1.1_Chr1$seqnames == "PGA_scaffold_1118__66_contigs__length_56234773"] <- "darkorchid"
+
+DeDup_v2_v_fSprSpr1.1_Chr3 <- DeDup_v2_v_fSprSpr1.1_satsuma_clean[DeDup_v2_v_fSprSpr1.1_satsuma_clean$T_seqnames == "OY735287.1_Sprattus_sprattus_genome_assembly,_chromosome:_3",]
+DeDup_v2_v_fSprSpr1.1_Chr3$plot_col <- "black"
+DeDup_v2_v_fSprSpr1.1_Chr3$plot_col[DeDup_v2_v_fSprSpr1.1_Chr3$seqnames == "PGA_scaffold_1111__78_contigs__length_49772038"] <- "darkorchid"
+
+
+pdf(file = "~/Projects/Sprat/doc/assembly_curation/DeDup_v2_vs_fSprSpr1.1_dot.pdf", width = 12, height = 12)
+
+plot(y = DeDup_v2_v_fSprSpr1.1_Chr1$start, 
+     x = DeDup_v2_v_fSprSpr1.1_Chr1$T_start,
+     col = DeDup_v2_v_fSprSpr1.1_Chr1$plot_col, pch = 16, main = "Chr 1", xlab = "fSprSpr1.1 (DToL)", ylab = "DeDup_v2 (in house)")
+
+plot(y = DeDup_v2_v_fSprSpr1.1_Chr2$start, 
+     x = DeDup_v2_v_fSprSpr1.1_Chr2$T_start, 
+     col = DeDup_v2_v_fSprSpr1.1_Chr2$plot_col, pch = 16, main = "Chr 2", xlab = "fSprSpr1.1 (DToL)", ylab = "DeDup_v2 (in house)")
+
+plot(y = DeDup_v2_v_fSprSpr1.1_Chr3$start, 
+     x = DeDup_v2_v_fSprSpr1.1_Chr3$T_start,
+     col = DeDup_v2_v_fSprSpr1.1_Chr3$plot_col, pch = 16, main = "Chr 3", xlab = "fSprSpr1.1 (DToL)", ylab = "DeDup_v2 (in house)")
+
+dev.off()
 
 Sprat_HiC_liftover_v2 <- function(sprat_pos_data, liftover_df, chr_size_df, lo_cols){
   require(GenomicRanges)

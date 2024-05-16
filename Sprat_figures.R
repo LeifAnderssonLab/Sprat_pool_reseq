@@ -181,6 +181,8 @@ c13_inv_filter <- 1:length(sprat_lo_GR$Ch_v2.0.2_chr) %in% which(sprat_lo_GR$Ch_
 c18_inv_filter <- 1:length(sprat_lo_GR$Ch_v2.0.2_chr) %in% which(sprat_lo_GR$Ch_v2.0.2_chr == "chr18" & sprat_lo_GR$Ch_v2.0.2_pos > 13e6 & sprat_lo_GR$Ch_v2.0.2_pos < 20e6 &sprat_site_filter) 
 c21_inv_filter <- 1:length(sprat_lo_GR$Ch_v2.0.2_chr) %in% which(sprat_lo_GR$Ch_v2.0.2_chr == "chr21" & sprat_lo_GR$Ch_v2.0.2_pos > 2e6 & sprat_lo_GR$Ch_v2.0.2_pos < 5e6 &sprat_site_filter)
 
+putative_inv_GR <- GRanges(seqnames = c("chr4","chr4", "chr5", "chr7", "chr13", "chr18", "chr21"), ranges = IRanges(start = c(27e6, 31e6, 11e6, 23e6, 8e6, 13e6, 2e6), end = c(29e6, Ch_v2.0.2_sizes$size[Ch_v2.0.2_sizes$name == "chr4"],13e6, 28e6 ,10e6, 20e6, 5e6)))
+
 combined_inv_filter <- c4_inv_filter | c5_inv_filter | c7_inv_filter | c13_inv_filter | c18_inv_filter | c21_inv_filter
 high_daf_filter <- 1:length(sprat_lo_GR$Ch_v2.0.2_chr) %in% which((sprat_lo_GR$oce_v_brack > 0.5 | sprat_lo_GR$oce_v_fjord > 0.5 | sprat_lo_GR$fjord_v_brack > 0.5) & sprat_site_filter)
 no_inv_no_diff_filter <- !(high_daf_filter | combined_inv_filter) & sprat_site_filter
